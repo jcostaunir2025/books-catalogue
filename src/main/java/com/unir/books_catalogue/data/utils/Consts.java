@@ -14,5 +14,6 @@ public class Consts {
     public static final String VISIBLE = "visible_libro";
     public static final String IDCATLIB = "idcategoria_libro";
     public static final String IDAUTLIB = "idautor_libro";
+    public static final String PRECIO = "precio_unitario";
 
 }
