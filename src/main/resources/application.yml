@@ -1,0 +1,27 @@
+## Configuracion de Spring
+spring:
+  application:
+    name: books-catalogue
+  datasource:
+    url: jdbc:mysql://localhost:3306/unir_bookscatalogue
+    username: root
+    password: UnirG9**
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+
+## Configuracion de Instancia
+server:
+  port: 8089
+
+## Configuracion del cliente de Eureka
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+    hostname: books-catalogue
