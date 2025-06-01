@@ -59,12 +59,16 @@ public class Libro {
 	@Column(name = IDAUTLIB)
 	private Integer idautor;
 
+	@Column(name = PRECIO)
+	private Integer precio;
+
 	public void update(LibroDto libroDto) {
 		this.titulo = libroDto.getTitulo();
 		this.isbn = libroDto.getIsbn();
 		this.fechapub = libroDto.getFechapub();
 		this.valoracion = libroDto.getValoracion();
 		this.stock = libroDto.getStock();
+		this.precio = libroDto.getPrecio();
 		/*this.visible = libroDto.getVisible();
 		this.idcategoria = libroDto.getIdcategoria();
 		this.idautor = libroDto.getIdautor();*/
