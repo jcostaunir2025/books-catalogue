@@ -67,12 +67,12 @@ public class LibrosServiceImpl implements LibrosService {
 
 		//Otra opcion: Jakarta Validation: https://www.baeldung.com/java-validation
 		if (request != null && StringUtils.hasLength(request.getTitulo_libro().trim())
-				&& StringUtils.hasLength(request.getIdautor_libro().trim())
+				&& (request.getIdautor_libro() != null && request.getIdautor_libro() > 0)
 				&& StringUtils.hasLength(request.getFechapub_libro().trim())
-				&& StringUtils.hasLength(request.getIdcategoria_libro().trim())
+				&& (request.getIdcategoria_libro() != null && request.getIdcategoria_libro() > 0)
 				&& StringUtils.hasLength(request.getIsbn_libro().trim())
 				&& StringUtils.hasLength(request.getValoracion_libro().trim())
-				&& StringUtils.hasLength(request.getStock_libro().trim())
+				&& (request.getStock_libro() != null && request.getStock_libro() > 0)
 				&& request.getVisible_libro() != null) {
 
 			Libro Libro = com.unir.books_catalogue.data.model.Libro.builder().titulo(request.getTitulo_libro())

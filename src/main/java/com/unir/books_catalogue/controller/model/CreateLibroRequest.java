@@ -17,8 +17,8 @@ public class CreateLibroRequest {
 	private String isbn_libro;
 	private String fechapub_libro;
 	private String valoracion_libro;
-	private String stock_libro;
+	private Integer stock_libro;
 	private Boolean visible_libro;
-	private String idcategoria_libro;
-	private String idautor_libro;
+	private Integer idcategoria_libro;
+	private Integer idautor_libro;
 }

@@ -35,10 +35,10 @@ public class Libro {
 //	@Column(name = Consts.VISIBLE)
 //	private Boolean visible;
 
-	@Column(name = TITULO, unique = true)
+	@Column(name = TITULO)
 	private String titulo;
 
-	@Column(name = ISBN)
+	@Column(name = ISBN, unique = true)
 	private String isbn;
 
 	@Column(name = Consts.FECHAPUB)
@@ -48,16 +48,16 @@ public class Libro {
 	private String valoracion;
 
 	@Column(name = STOCK)
-	private String stock;
+	private Integer stock;
 
 	@Column(name = VISIBLE)
 	private Boolean visible;
 
 	@Column(name = IDCATLIB)
-	private String idcategoria;
+	private Integer idcategoria;
 
 	@Column(name = IDAUTLIB)
-	private String idautor;
+	private Integer idautor;
 
 	public void update(LibroDto libroDto) {
 		this.titulo = libroDto.getTitulo();
