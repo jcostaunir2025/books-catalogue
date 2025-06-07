@@ -1,7 +1,5 @@
 package com.unir.books_catalogue.data.utils;
 
-import java.sql.Date;
-
 public class Consts {
 
     //Constants for db entity fields

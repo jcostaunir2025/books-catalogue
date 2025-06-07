@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,9 +15,10 @@ public class CreateLibroRequest {
 
 	private String titulo_libro;
 	private String isbn_libro;
-	private String fechapub_libro;
+	private Date fechapub_libro;
 	private String valoracion_libro;
 	private Integer stock_libro;
+	private Integer precio_libro;
 	private Boolean visible_libro;
 	private Integer idcategoria_libro;
 	private Integer idautor_libro;

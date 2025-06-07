@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.unir.books_catalogue.data.model.Libro;
 import com.unir.books_catalogue.controller.model.CreateLibroRequest;
-//import com.unir.books_catalogue.service.ProductsService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +38,10 @@ public class LibrosController {
     @ApiResponse(
             responseCode = "200",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Libro.class)))
+    @ApiResponse(
+            responseCode = "404",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = void.class)),
+            description = "No se ha encontrado el libro con el identificador indicado.")
     public ResponseEntity<List<Libro>> getLibros(
             @RequestHeader Map<String, String> headers,
             @Parameter(name = "titulo", description = "Nombre del libro. No tiene por que ser exacto", example = "", required = false)
@@ -54,13 +57,12 @@ public class LibrosController {
             @Parameter(name = "valoracion", description = "Valoracion del libro. Debe ser exacta", example = "", required = false)
             @RequestParam(required = false) String valoracion) {
 
-        log.info("headers: {}", headers);
         List<Libro> libros = service.getLibros(titulo, autor, fechapub, categoria, isbn, valoracion, true);
 
-        if (libros != null) {
+        if (libros != null && !libros.isEmpty()) {
             return ResponseEntity.ok(libros);
         } else {
-            return ResponseEntity.ok(Collections.emptyList());
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -78,7 +80,6 @@ public class LibrosController {
             description = "No se ha encontrado el libro con el identificador indicado.")
     public ResponseEntity<Libro> getLibro(@PathVariable String idlibro) {
 
-        log.info("Request received for product {}", idlibro);
         Libro libro = service.getLibro(idlibro);
 
         if (libro != null) {
@@ -129,10 +130,6 @@ public class LibrosController {
             responseCode = "400",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class)),
             description = "Datos incorrectos introducidos.")
-    @ApiResponse(
-            responseCode = "404",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class)),
-            description = "No se ha encontrado el libro con el identificador indicado.")
     public ResponseEntity<Libro> addLibro(@RequestBody CreateLibroRequest request) {
 
         Libro createdLibro = service.createLibro(request);

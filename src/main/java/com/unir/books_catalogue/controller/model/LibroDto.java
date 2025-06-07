@@ -2,7 +2,7 @@ package com.unir.books_catalogue.controller.model;
 
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -11,15 +11,10 @@ import java.sql.Date;
 @Builder
 @ToString
 public class LibroDto {
-
+	private Integer id;
 	private String titulo;
-	private String isbn;
-	private String fechapub;
+	private Date fechapub;
 	private String valoracion;
 	private Integer stock;
 	private Integer precio;
-	//private Boolean visible;
-	//private String idcategoria;
-	//private String idautor;
-
 }

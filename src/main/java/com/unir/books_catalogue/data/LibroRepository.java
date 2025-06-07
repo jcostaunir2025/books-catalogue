@@ -50,10 +50,10 @@ public class LibroRepository {
         }
 
         if (StringUtils.isNotBlank(fechapub)) {
-            DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-            String fechapubdate = "";
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Date fechapubdate = null;
             try {
-                fechapubdate = formatter.format(formatter.parse(fechapub));
+                fechapubdate = df.parse(fechapub);
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }

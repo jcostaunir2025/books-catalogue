@@ -1,5 +1,6 @@
 package com.unir.books_catalogue.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.unir.books_catalogue.controller.model.LibroDto;
 import com.unir.books_catalogue.data.utils.Consts;
 import jakarta.persistence.*;
@@ -23,18 +24,6 @@ public class Libro {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idlibro;
 	
-//	@Column(name = Consts.NAME, unique = true)
-//	private String name;
-//
-//	@Column(name = Consts.COUNTRY)
-//	private String country;
-//
-//	@Column(name = Consts.DESCRIPTION)
-//	private String description;
-//
-//	@Column(name = Consts.VISIBLE)
-//	private Boolean visible;
-
 	@Column(name = TITULO)
 	private String titulo;
 
@@ -42,7 +31,7 @@ public class Libro {
 	private String isbn;
 
 	@Column(name = Consts.FECHAPUB)
-	private String fechapub;
+	private Date fechapub;
 
 	@Column(name = VALORACION)
 	private String valoracion;
@@ -64,7 +53,6 @@ public class Libro {
 
 	public void update(LibroDto libroDto) {
 		this.titulo = libroDto.getTitulo();
-		this.isbn = libroDto.getIsbn();
 		this.fechapub = libroDto.getFechapub();
 		this.valoracion = libroDto.getValoracion();
 		this.stock = libroDto.getStock();

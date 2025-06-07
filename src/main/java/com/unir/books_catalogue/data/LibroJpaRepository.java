@@ -13,7 +13,7 @@ interface LibroJpaRepository extends JpaRepository<Libro, Long>, JpaSpecificatio
 
 	List<Libro> findByIdautor(Integer idautor);
 
-	List<Libro> findByFechapub(String fechapub);
+	List<Libro> findByFechapub(Date fechapub);
 
 	List<Libro> findByIdcategoria(Integer idcategoria);
 
