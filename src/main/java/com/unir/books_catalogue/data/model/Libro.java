@@ -1,5 +1,6 @@
 package com.unir.books_catalogue.data.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.unir.books_catalogue.controller.model.LibroDto;
 import com.unir.books_catalogue.data.utils.Consts;
@@ -30,6 +31,7 @@ public class Libro {
 	@Column(name = ISBN, unique = true)
 	private String isbn;
 
+	@JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@Column(name = Consts.FECHAPUB)
 	private Date fechapub;
 
