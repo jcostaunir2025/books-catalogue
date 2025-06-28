@@ -4,15 +4,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.unir.books_catalogue.controller.model.LibroDto;
 import com.unir.books_catalogue.data.utils.Consts;
-import jakarta.persistence.*;
+//import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import static com.unir.books_catalogue.data.utils.Consts.*;
 
-@Entity
-@Table(name = "libros")
+@Document(indexName = "libros", createIndex = true)
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,35 +28,35 @@ import static com.unir.books_catalogue.data.utils.Consts.*;
 public class Libro {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idlibro;
-	
-	@Column(name = TITULO)
+	//@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private String idlibro;
+
+	@Field(type = FieldType.Search_As_You_Type, name = TITULO)
 	private String titulo;
 
-	@Column(name = ISBN, unique = true)
+	@Field(type = FieldType.Keyword, name = ISBN)
 	private String isbn;
 
-	@JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	@Column(name = Consts.FECHAPUB)
-	private Date fechapub;
+	//@JsonFormat(shape= JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@Field(type = FieldType.Date, format = DateFormat.date, name = FECHAPUB)
+	private LocalDate fechapub;
 
-	@Column(name = VALORACION)
+	@Field(type = FieldType.Keyword, name = VALORACION)
 	private String valoracion;
 
-	@Column(name = STOCK)
+	@Field(type = FieldType.Integer, name = STOCK)
 	private Integer stock;
 
-	@Column(name = VISIBLE)
+	@Field(type = FieldType.Boolean, name = VISIBLE)
 	private Boolean visible;
 
-	@Column(name = IDCATLIB)
+	@Field(type = FieldType.Keyword, name = IDCATLIB)
 	private Integer idcategoria;
 
-	@Column(name = IDAUTLIB)
+	@Field(type = FieldType.Keyword, name = IDAUTLIB)
 	private Integer idautor;
 
-	@Column(name = PRECIO)
+	@Field(type = FieldType.Integer, name = PRECIO)
 	private Integer precio;
 
 	public void update(LibroDto libroDto) {
@@ -65,3 +71,17 @@ public class Libro {
 	}
 
 }
+
+/*
+	@Field(type = FieldType.Text, name = "name")
+	private String name;
+
+	@Field(type = FieldType.Keyword, name = "country")
+	private String country;
+
+	@Field(type = FieldType.Search_As_You_Type, name = "description")
+	private String description;
+
+	@Field(type = FieldType.Boolean, name = "visible")
+	private Boolean visible;
+*/

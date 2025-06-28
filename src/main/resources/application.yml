@@ -2,20 +2,21 @@
 spring:
   application:
     name: books-catalogue
-  datasource:
-    url: jdbc:mysql://localhost:3306/unir_bookscatalogue
-    username: root
-    password: UnirG9**
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    defer-datasource-initialization: true
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/unir_bookscatalogue
+#    username: root
+#    password: UnirG9**
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    defer-datasource-initialization: true
 
 ## Configuracion de Instancia
 server:
   port: 8089
+  fullAddress: ${HOST:http://localhost}:${PORT:${server.port}}
 
 ## Configuracion del cliente de Eureka
 eureka:
@@ -25,3 +26,13 @@ eureka:
   instance:
     preferIpAddress: true
     hostname: books-catalogue
+
+##Elasticsearch config
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST}
+  credentials:
+    user: ${ELASTICSEARCH_USER}
+    password: ${ELASTICSEARCH_PWD}
+logging:
+  level:
+    tracer: TRACE

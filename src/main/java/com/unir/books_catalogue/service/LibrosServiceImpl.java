@@ -7,6 +7,8 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.unir.books_catalogue.controller.model.CreateLibroRequest;
 import com.unir.books_catalogue.controller.model.LibroDto;
+import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
+import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
 import com.unir.books_catalogue.data.LibroRepository;
 import com.unir.books_catalogue.data.model.Libro;
 import lombok.extern.slf4j.Slf4j;
@@ -27,32 +29,38 @@ public class LibrosServiceImpl implements LibrosService {
 	private ObjectMapper objectMapper;
 
 	@Override
-	public List<Libro> getLibros(String titulo, String autor, String fechapub, String categoria, String isbn,
-			String valoracion, Boolean visible) {
+    public List<Libro> getLibros(String titulo, String autor, String fechapub, String categoria, String isbn,
+			String valoracion, Boolean visible, Integer page, Boolean aggregate) {
 
-		if ((StringUtils.hasLength(titulo)
-				|| StringUtils.hasLength(autor)
-				|| StringUtils.hasLength(fechapub)
-				|| StringUtils.hasLength(categoria)
-				|| StringUtils.hasLength(isbn)
-				|| StringUtils.hasLength(valoracion))
-				&& visible != null) {
-			return repository.search(titulo, autor, fechapub, categoria, isbn, valoracion, visible);
-		}
+//		if ((StringUtils.hasLength(titulo)
+//				|| StringUtils.hasLength(autor)
+//				|| StringUtils.hasLength(fechapub)
+//				|| StringUtils.hasLength(categoria)
+//				|| StringUtils.hasLength(isbn)
+//				|| StringUtils.hasLength(valoracion))
+//				&& visible != null) {
+//			return repository.search(titulo, autor, fechapub, categoria, isbn, valoracion, visible);
+//		}
 
-		List<Libro> Libros = repository.getLibros();
+		List<Libro> Libros = repository.findLibros(titulo, autor, fechapub, categoria, isbn, valoracion, visible, page, aggregate).getLibros();
 		return Libros.isEmpty() ? null : Libros;
 	}
 
 	@Override
+	public LibrosQueryResponseAgg getLibrosAgg(List<String> fechapubValues, List<String> stockValues, List<String> precioValues, String valoracion, String titulo, String page) {
+
+		return repository.findLibrosAgg(fechapubValues, stockValues, precioValues, valoracion, titulo, page);
+	}
+
+	@Override
 	public Libro getLibro(String LibroId) {
-		return repository.getById(Long.valueOf(LibroId));
+		return repository.findById(LibroId);
 	}
 
 	@Override
 	public Boolean removeLibro(String LibroId) {
 
-		Libro Libro = repository.getById(Long.valueOf(LibroId));
+		Libro Libro = repository.findById(LibroId);
 
 		if (Libro != null) {
 			repository.delete(Libro);
@@ -65,7 +73,6 @@ public class LibrosServiceImpl implements LibrosService {
 	@Override
 	public Libro createLibro(CreateLibroRequest request) {
 
-		//Otra opcion: Jakarta Validation: https://www.baeldung.com/java-validation
 		if (request != null && StringUtils.hasLength(request.getTitulo_libro().trim())
 				&& (request.getIdautor_libro() != null && request.getIdautor_libro() > 0)
 				&& (request.getFechapub_libro() != null)
@@ -97,7 +104,7 @@ public class LibrosServiceImpl implements LibrosService {
 	public Libro updateLibro(String LibroId, String request) {
 
 		//PATCH se implementa en este caso mediante Merge Patch: https://datatracker.ietf.org/doc/html/rfc7386
-		Libro Libro = repository.getById(Long.valueOf(LibroId));
+		Libro Libro = repository.findById(LibroId);
 		if (Libro != null) {
 			try {
 				JsonMergePatch jsonMergePatch = JsonMergePatch.fromJson(objectMapper.readTree(request));
@@ -116,7 +123,7 @@ public class LibrosServiceImpl implements LibrosService {
 
 	@Override
 	public Libro updateLibro(String LibroId, LibroDto updateRequest) {
-		Libro Libro = repository.getById(Long.valueOf(LibroId));
+		Libro Libro = repository.findById(LibroId);
 		if (Libro != null) {
 			Libro.update(updateRequest);
 			repository.save(Libro);

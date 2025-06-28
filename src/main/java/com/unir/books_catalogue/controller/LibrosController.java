@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.unir.books_catalogue.controller.model.LibroDto;
+import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
+import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
 import com.unir.books_catalogue.service.LibrosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Libros Controller", description = "Microservicio encargado de exponer operaciones CRUD sobre Libros alojados en una base de datos MySQL.")
 public class LibrosController {
 
+    @Autowired
     private final LibrosService service;
 
     @GetMapping("/libros")
@@ -59,15 +63,36 @@ public class LibrosController {
             @Parameter(name = "isbn", description = "ISBN del libro. Debe ser exacto", example = "", required = false)
             @RequestParam(required = false) String isbn,
             @Parameter(name = "valoracion", description = "Valoracion del libro. Debe ser exacta", example = "", required = false)
-            @RequestParam(required = false) String valoracion) {
+            @RequestParam(required = false) String valoracion,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "false") Boolean aggregate ){
 
-        List<Libro> libros = service.getLibros(titulo, autor, fechapub, categoria, isbn, valoracion, true);
+        List<Libro> libros = service.getLibros(titulo, autor, fechapub, categoria, isbn, valoracion, true, page, aggregate);
 
         if (libros != null && !libros.isEmpty()) {
             return ResponseEntity.ok(libros);
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/librosagg")
+    public ResponseEntity<LibrosQueryResponseAgg> getLibrosAgg(
+            @RequestParam(required = false) List<String> fechapubValues,
+            @RequestParam(required = false) List<String> stockValues,
+            @RequestParam(required = false) List<String> precioValues,
+            @RequestParam(required = false) String valoracion,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false, defaultValue = "0") String page) {
+
+        LibrosQueryResponseAgg response = service.getLibrosAgg(
+                fechapubValues,
+                stockValues,
+                precioValues,
+                valoracion,
+                titulo,
+                page);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/libros/{idlibro}")
