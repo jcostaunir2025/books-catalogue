@@ -2,13 +2,19 @@ package com.unir.books_catalogue.data.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unir.books_catalogue.controller.model.LibroDto;
 import com.unir.books_catalogue.data.utils.Consts;
 //import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -69,7 +75,6 @@ public class Libro {
 		this.idcategoria = libroDto.getIdcategoria();
 		this.idautor = libroDto.getIdautor();*/
 	}
-
 }
 
 /*

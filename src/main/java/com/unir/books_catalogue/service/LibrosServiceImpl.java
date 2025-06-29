@@ -7,16 +7,17 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.unir.books_catalogue.controller.model.CreateLibroRequest;
 import com.unir.books_catalogue.controller.model.LibroDto;
-import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
 import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
 import com.unir.books_catalogue.data.LibroRepository;
 import com.unir.books_catalogue.data.model.Libro;
+import com.unir.books_catalogue.data.model.LibroResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+
 
 @Service
 @Slf4j
@@ -31,16 +32,6 @@ public class LibrosServiceImpl implements LibrosService {
 	@Override
     public List<Libro> getLibros(String titulo, String autor, String fechapub, String categoria, String isbn,
 			String valoracion, Boolean visible, Integer page, Boolean aggregate) {
-
-//		if ((StringUtils.hasLength(titulo)
-//				|| StringUtils.hasLength(autor)
-//				|| StringUtils.hasLength(fechapub)
-//				|| StringUtils.hasLength(categoria)
-//				|| StringUtils.hasLength(isbn)
-//				|| StringUtils.hasLength(valoracion))
-//				&& visible != null) {
-//			return repository.search(titulo, autor, fechapub, categoria, isbn, valoracion, visible);
-//		}
 
 		List<Libro> Libros = repository.findLibros(titulo, autor, fechapub, categoria, isbn, valoracion, visible, page, aggregate).getLibros();
 		return Libros.isEmpty() ? null : Libros;
@@ -133,4 +124,13 @@ public class LibrosServiceImpl implements LibrosService {
 		}
 	}
 
+	@Override
+	public List<LibroResponse> getLibroResponsesMapping(List<Libro> libros){
+		return repository.getLibroResponsesMapping(libros);
+	}
+
+	@Override
+	public LibroResponse getLibroResponseMapping(Libro libro){
+		return repository.getLibroResponseMapping(libro);
+	}
 }

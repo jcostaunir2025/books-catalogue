@@ -1,16 +1,10 @@
 package com.unir.books_catalogue.controller;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.unir.books_catalogue.controller.model.LibroDto;
-import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
 import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
+import com.unir.books_catalogue.data.model.LibroResponse;
 import com.unir.books_catalogue.service.LibrosService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,7 +44,7 @@ public class LibrosController {
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = void.class)),
             description = "No se ha encontrado el libro con el identificador indicado.")
-    public ResponseEntity<List<Libro>> getLibros(
+    public ResponseEntity<List<LibroResponse>> getLibros(
             @RequestHeader Map<String, String> headers,
             @Parameter(name = "titulo", description = "Nombre del libro. No tiene por que ser exacto", example = "", required = false)
             @RequestParam(required = false) String titulo,
@@ -69,8 +63,10 @@ public class LibrosController {
 
         List<Libro> libros = service.getLibros(titulo, autor, fechapub, categoria, isbn, valoracion, true, page, aggregate);
 
-        if (libros != null && !libros.isEmpty()) {
-            return ResponseEntity.ok(libros);
+        List<LibroResponse> libroResponses = service.getLibroResponsesMapping(libros);
+
+        if (libroResponses != null && !libroResponses.isEmpty()) {
+            return ResponseEntity.ok(libroResponses);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -107,12 +103,13 @@ public class LibrosController {
             responseCode = "404",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class)),
             description = "No se ha encontrado el libro con el identificador indicado.")
-    public ResponseEntity<Libro> getLibro(@PathVariable String idlibro) {
+    public ResponseEntity<LibroResponse> getLibro(@PathVariable String idlibro) {
 
         Libro libro = service.getLibro(idlibro);
+        LibroResponse libroResponse = service.getLibroResponseMapping(libro);
 
-        if (libro != null) {
-            return ResponseEntity.ok(libro);
+        if (libroResponse != null) {
+            return ResponseEntity.ok(libroResponse);
         } else {
             return ResponseEntity.notFound().build();
         }

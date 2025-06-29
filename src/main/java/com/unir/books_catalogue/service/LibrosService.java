@@ -2,9 +2,9 @@ package com.unir.books_catalogue.service;
 
 import com.unir.books_catalogue.controller.model.CreateLibroRequest;
 import com.unir.books_catalogue.controller.model.LibroDto;
-import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
 import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
 import com.unir.books_catalogue.data.model.Libro;
+import com.unir.books_catalogue.data.model.LibroResponse;
 
 import java.util.List;
 
@@ -26,4 +26,7 @@ public interface LibrosService {
 
 	Libro updateLibro(String LibroId, LibroDto updateRequest);
 
+	List<LibroResponse> getLibroResponsesMapping(List<Libro> libros);
+
+	LibroResponse getLibroResponseMapping(Libro libro);
 }

@@ -1,6 +1,6 @@
 package com.unir.books_catalogue.controller.model;
 
-import com.unir.books_catalogue.data.model.Libro;
+import com.unir.books_catalogue.data.model.LibroResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 public class LibrosQueryResponseAgg {
 
-    private List<Libro> libros;
+    private List<LibroResponse> libros;
     private Map<String, List<AggregationDetails>> aggs;
 
 }

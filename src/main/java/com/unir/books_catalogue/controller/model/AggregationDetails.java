@@ -13,5 +13,4 @@ public class AggregationDetails {
 
     private String key;
     private Integer count;
-    //private String uri;
 }

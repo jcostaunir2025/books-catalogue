@@ -2,13 +2,15 @@ package com.unir.books_catalogue.data;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 import com.unir.books_catalogue.controller.model.LibrosQueryResponseAgg;
+import com.unir.books_catalogue.data.model.Autor;
+import com.unir.books_catalogue.data.model.Categoria;
 import com.unir.books_catalogue.data.model.Libro;
 import com.unir.books_catalogue.controller.model.AggregationDetails;
 import com.unir.books_catalogue.controller.model.LibrosQueryResponse;
+import com.unir.books_catalogue.data.model.LibroResponse;
 import com.unir.books_catalogue.data.utils.Consts;
 import lombok.SneakyThrows;
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +21,6 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.range.ParsedDateRange;
 import org.elasticsearch.search.aggregations.bucket.range.ParsedRange;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -31,6 +32,8 @@ import org.springframework.stereotype.Repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.unir.books_catalogue.data.model.aut_cat_data.autores;
+import static com.unir.books_catalogue.data.model.aut_cat_data.categorias;
 import static com.unir.books_catalogue.data.utils.Consts.*;
 
 @Repository
@@ -41,8 +44,6 @@ public class LibroRepository {
     @Value("${server.fullAddress}")
     private String serverFullAddress;
 
-    // Esta clase (y bean) es la unica que usan directamente los servicios para
-    // acceder a los datos.
     private final LibroESRepository libroESRepository;
     private final ElasticsearchOperations elasticClient;
 
@@ -99,15 +100,10 @@ public class LibroRepository {
         }
 
 
-
-        //Si no he recibido ningun parametro, busco todos los elementos.
         if (!querySpec.hasClauses()) {
             querySpec.must(QueryBuilders.matchAllQuery());
         }
 
-        //Filtro implicito
-        //No le pido al usuario que lo introduzca pero lo aplicamos proactivamente en todas las peticiones
-        //En este caso, que los productos sean visibles (estado correcto de la entidad)
         querySpec.must(QueryBuilders.termQuery(VISIBLE, true));
 
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder().withQuery(querySpec);
@@ -118,9 +114,7 @@ public class LibroRepository {
 //            nativeSearchQueryBuilder.withMaxResults(0);
         }
 
-        //Opcionalmente, podemos paginar los resultados
         nativeSearchQueryBuilder.withPageable(PageRequest.of(page, 10));
-        //Pagina 0, 10 elementos por pagina. El tam de pagina puede venir como qParam y tambien el numero de pagina
 
         Query query = nativeSearchQueryBuilder.build();
         SearchHits<Libro> result = elasticClient.search(query, Libro.class);
@@ -200,39 +194,70 @@ public class LibroRepository {
 
         Query query = nativeSearchQueryBuilder.build();
         SearchHits<Libro> result = elasticClient.search(query, Libro.class);
-        return new LibrosQueryResponseAgg(getResponseEmployees(result), getResponseAggregations(result));
+        return new LibrosQueryResponseAgg(getResponseLibros(result), getResponseAggregations(result));
 
     }
 
-    private List<Libro> getResponseEmployees(SearchHits<Libro> result) {
-        return result.getSearchHits().stream().map(SearchHit::getContent).toList();
+    public List<LibroResponse> getLibroResponsesMapping(List<Libro> libros) {
+        List<LibroResponse> libroResponses = new ArrayList<>();
+
+        libros.forEach(libro -> {
+            libroResponses.add(getLibroResponseMapping(libro));
+        });
+
+        return libroResponses;
+    }
+
+    public LibroResponse getLibroResponseMapping(Libro libro){
+        var newLibro = new LibroResponse();
+        for (Autor aut : autores) {
+            if (aut.idautor_libro.equals(libro.getIdautor())){
+                newLibro.setIdautor(aut.idautor_libro);
+                newLibro.autor = aut.autor_nombre;
+            }
+        }
+        for (Categoria cate : categorias) {
+            if (cate.idcategoria_libro.equals(libro.getIdcategoria())){
+                newLibro.setIdcategoria(cate.idcategoria_libro);
+                newLibro.categoria = cate.categoria_nombre;
+            }
+        }
+        newLibro.setIdlibro(libro.getIdlibro());
+        newLibro.setTitulo(libro.getTitulo());
+        newLibro.setIsbn(libro.getIsbn());
+        newLibro.setValoracion(libro.getValoracion());
+        newLibro.setFechapub(libro.getFechapub());
+        newLibro.setPrecio(libro.getPrecio());
+        newLibro.setVisible(libro.getVisible());
+        newLibro.setStock(libro.getStock());
+
+        return newLibro;
+    }
+
+    private List<LibroResponse> getResponseLibros(SearchHits<Libro> result) {
+        List<Libro> response = result.getSearchHits().stream().map(SearchHit::getContent).toList();
+        return getLibroResponsesMapping(response);
     }
 
     private Map<String, List<AggregationDetails>> getResponseAggregations(SearchHits<Libro> result) {
 
-        //Mapa de detalles de agregaciones
         Map<String, List<AggregationDetails>> responseAggregations = new HashMap<>();
 
-        //Recorremos las agregaciones
         if (result.hasAggregations()) {
             Map<String, Aggregation> aggs = result.getAggregations().asMap();
 
-            //Recorremos las agregaciones
             aggs.forEach((key, value) -> {
 
-                //Si no existe la clave en el mapa, la creamos
                 if(!responseAggregations.containsKey(key)) {
                     responseAggregations.put(key, new LinkedList<>());
                 }
 
-                //Si la agregacion es de tipo termino, recorremos los buckets
                 if (value instanceof ParsedDateRange parsedDateRange) {
                     parsedDateRange.getBuckets().forEach(bucket -> {
                         responseAggregations.get(key).add(new AggregationDetails(bucket.getKey().toString(), (int) bucket.getDocCount()));
                     });
                 }
 
-                //Si la agregacion es de tipo rango, recorremos tambien los buckets
                 if (value instanceof ParsedRange parsedRange) {
                     parsedRange.getBuckets().forEach(bucket -> {
                         responseAggregations.get(key).add(new AggregationDetails(bucket.getKeyAsString(), (int) bucket.getDocCount()));
@@ -276,87 +301,3 @@ public class LibroRepository {
         return querySpec;
     }
 }
-
-
-//package com.unir.books_catalogue.data;
-//
-//import com.unir.books_catalogue.data.model.Libro;
-//import com.unir.books_catalogue.data.utils.SearchCriteria;
-//import com.unir.books_catalogue.data.utils.SearchOperation;
-//import com.unir.books_catalogue.data.utils.SearchStatement;
-//import lombok.RequiredArgsConstructor;
-//import org.apache.commons.lang3.StringUtils;
-//import org.springframework.stereotype.Repository;
-//
-//import java.text.DateFormat;
-//import java.text.ParseException;
-//import java.text.SimpleDateFormat;
-//import java.util.Date;
-//import java.util.List;
-//
-//@Repository
-//@RequiredArgsConstructor
-//public class LibroRepository {
-//
-//    private final LibroESRepository repository;
-//
-
-//    public List<Libro> getLibros() {
-//        return repository.findAll();
-//    }
-//
-//    public Libro getById(Long id) {
-//        return repository.findById(id).orElse(null);
-//    }
-//
-//    public Libro save(Libro Libro) {
-//        return repository.save(Libro);
-//    }
-//
-//    public void delete(Libro Libro) {
-//        repository.delete(Libro);
-//    }
-
-//    public List<Libro> search(String titulo, String autor, String fechapub, String categoria, String isbn,
-//                              String valoracion, Boolean visible) {
-//        SearchCriteria<Libro> spec = new SearchCriteria<>();
-//
-//        if (StringUtils.isNotBlank(titulo)) {
-//            spec.add(new SearchStatement("titulo", titulo, SearchOperation.MATCH));
-//        }
-//
-//        if (StringUtils.isNotBlank(autor)) {
-//            spec.add(new SearchStatement("idautor", autor, SearchOperation.EQUAL));
-//        }
-//
-//        if (StringUtils.isNotBlank(fechapub)) {
-//            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-//            Date fechapubdate = null;
-//            try {
-//                fechapubdate = df.parse(fechapub);
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
-//            spec.add(new SearchStatement("fechapub", fechapubdate, SearchOperation.EQUAL));
-//        }
-//
-//        if (StringUtils.isNotBlank(categoria)) {
-//            spec.add(new SearchStatement("idcategoria", categoria, SearchOperation.EQUAL));
-//        }
-//
-//        if (StringUtils.isNotBlank(isbn)) {
-//            spec.add(new SearchStatement("isbn", isbn, SearchOperation.EQUAL));
-//        }
-//
-//        if (StringUtils.isNotBlank(valoracion)) {
-//            spec.add(new SearchStatement("valoracion", valoracion, SearchOperation.EQUAL));
-//        }
-//
-//        if (visible != null) {
-//            spec.add(new SearchStatement("visible", visible, SearchOperation.EQUAL));
-//        }
-//
-//        return repository.findAll(spec);
-//    }
-
-//}
