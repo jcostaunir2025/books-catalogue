@@ -161,10 +161,6 @@ public class LibroRepository {
         NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder().withQuery(querySpec);
 
         nativeSearchQueryBuilder.addAggregation(AggregationBuilders
-                .terms(Consts.AGG_KEY_RANGE_VALORACION)
-                .field(VALORACION).size(10000));
-
-        nativeSearchQueryBuilder.addAggregation(AggregationBuilders
                 .dateRange(AGG_KEY_RANGE_FECHAPUB)
                 .field(FECHAPUB)
                 .addUnboundedTo("2022-12-31")
