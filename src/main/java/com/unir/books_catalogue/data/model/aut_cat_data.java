@@ -13,6 +13,8 @@ public class aut_cat_data {
             new Categoria(4, "Terror"),
             new Categoria(5, "Comedia"),
             new Categoria(6, "Religión"),
+            new Categoria(7, "Psicologia"),
+            new Categoria(8, "Ciencia"),
     };
 }
 
