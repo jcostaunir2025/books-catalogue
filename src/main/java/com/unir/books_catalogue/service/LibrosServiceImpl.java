@@ -38,9 +38,9 @@ public class LibrosServiceImpl implements LibrosService {
 	}
 
 	@Override
-	public LibrosQueryResponseAgg getLibrosAgg(List<String> fechapubValues, List<String> stockValues, List<String> precioValues, String valoracion, String titulo, String page) {
+	public LibrosQueryResponseAgg getLibrosAgg(List<String> fechapubValues, List<String> stockValues, List<String> precioValues, String titulo, String page) {
 
-		return repository.findLibrosAgg(fechapubValues, stockValues, precioValues, valoracion, titulo, page);
+		return repository.findLibrosAgg(fechapubValues, stockValues, precioValues, titulo, page);
 	}
 
 	@Override

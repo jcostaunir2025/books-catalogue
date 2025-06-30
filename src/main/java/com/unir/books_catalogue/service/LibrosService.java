@@ -14,7 +14,7 @@ public interface LibrosService {
 						  String valoracion, Boolean visible, Integer page, Boolean aggregate);
 
 	LibrosQueryResponseAgg getLibrosAgg(List<String> fechapubValues, List<String> stockValues,
-										List<String> precioValues, String valoracion, String titulo, String page);
+										List<String> precioValues, String titulo, String page);
 
 	Libro getLibro(String LibroId);
 

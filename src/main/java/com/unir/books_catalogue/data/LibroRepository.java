@@ -139,12 +139,8 @@ public class LibroRepository {
     }
 
     @SneakyThrows
-    public LibrosQueryResponseAgg findLibrosAgg(List<String> fechapubValues, List<String> stockValues, List<String> precioValues, String valoracion, String titulo, String page){
+    public LibrosQueryResponseAgg findLibrosAgg(List<String> fechapubValues, List<String> stockValues, List<String> precioValues, String titulo, String page){
         BoolQueryBuilder querySpec = QueryBuilders.boolQuery();
-
-        if (!StringUtils.isEmpty(valoracion)) {
-            querySpec.must(QueryBuilders.matchQuery(VALORACION, valoracion));
-        }
 
         if (!StringUtils.isEmpty(titulo)) {
             querySpec.must(QueryBuilders.multiMatchQuery(titulo, tituloSearchFields).type(Type.BOOL_PREFIX));

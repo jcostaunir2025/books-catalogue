@@ -77,7 +77,6 @@ public class LibrosController {
             @RequestParam(required = false) List<String> fechapubValues,
             @RequestParam(required = false) List<String> stockValues,
             @RequestParam(required = false) List<String> precioValues,
-            @RequestParam(required = false) String valoracion,
             @RequestParam(required = false) String titulo,
             @RequestParam(required = false, defaultValue = "0") String page) {
 
@@ -85,7 +84,6 @@ public class LibrosController {
                 fechapubValues,
                 stockValues,
                 precioValues,
-                valoracion,
                 titulo,
                 page);
         return ResponseEntity.ok(response);
