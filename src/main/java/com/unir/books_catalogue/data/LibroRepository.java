@@ -244,12 +244,6 @@ public class LibroRepository {
                     responseAggregations.put(key, new LinkedList<>());
                 }
 
-                if (value instanceof ParsedDateRange parsedDateRange) {
-                    parsedDateRange.getBuckets().forEach(bucket -> {
-                        responseAggregations.get(key).add(new AggregationDetails(bucket.getKey().toString(), (int) bucket.getDocCount()));
-                    });
-                }
-
                 if (value instanceof ParsedRange parsedRange) {
                     parsedRange.getBuckets().forEach(bucket -> {
                         responseAggregations.get(key).add(new AggregationDetails(bucket.getKeyAsString(), (int) bucket.getDocCount()));
